@@ -1,11 +1,55 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Colors } from './../../constants/Colors'; // Ensure this path is correct
+import StartNewTripCard from '../../components/MyTrips/StartNewTripCard';
 
-export default function mytrip() {
-  console.log("mytrip")
+export default function MyTripScreen() {
+  const [userTrips, setUserTrips] = useState();
+
   return (
-    <View>
-      <Text>mytrip</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>My Trips</Text>
+        <TouchableOpacity style={styles.addButton}>
+          <MaterialIcons name="add" size={28} color={Colors.light.background} />
+        </TouchableOpacity>
+      </View>
+      {userTrips?.length==0?
+      <StartNewTripCard/> : null
+      }
     </View>
-  )
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: Colors.light.background,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 30,
+    marginTop: 40, // Top margin
+  },
+  title: {
+    fontSize: 28,
+    fontFamily: 'outfit-bold', // Ensure this font is correctly loaded
+    color: Colors.light.text,
+    letterSpacing: 1.2,
+  },
+  addButton: {
+    backgroundColor: Colors.light.greenTint,
+    borderRadius: 24,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: Colors.light.greenTint,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+  },
+});
