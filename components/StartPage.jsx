@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontFamily: 'outfit-bold',
     color: Colors.white,
     textAlign: 'center',
@@ -88,13 +88,13 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: Colors.primary,
-    paddingVertical: 14,
-    paddingHorizontal: 32,
+    paddingVertical: 16,
+    paddingHorizontal: 34,
     borderRadius: 25,
     marginBottom: 20,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 15,
     color: Colors.white,
     textAlign: 'center',
     fontFamily: 'outfit-bold',

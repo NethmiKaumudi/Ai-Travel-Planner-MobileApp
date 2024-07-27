@@ -32,6 +32,8 @@ export default function SignUp() {
       .then((userCredential) => {
         // Signed up
         const user = userCredential.user;
+        router.replace('/mytrip');
+
         console.log(user);
           // Clear the input fields
           setFullName("");
