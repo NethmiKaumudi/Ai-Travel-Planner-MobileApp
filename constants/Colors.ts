@@ -6,7 +6,13 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
+// Define green theme colors
+const greenLight = '#4CAF50'; // Light green
+const greenDark = '#2C6B2F';  // Dark green
+
 export const Colors = {
+  white: '#fff',
+  primary: greenLight, // Default primary color for green theme
   light: {
     text: '#11181C',
     background: '#fff',
@@ -14,6 +20,7 @@ export const Colors = {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
+    greenTint: greenLight, // Add green theme for light mode
   },
   dark: {
     text: '#ECEDEE',
@@ -22,5 +29,6 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    greenTint: greenDark, // Add green theme for dark mode
   },
 };
