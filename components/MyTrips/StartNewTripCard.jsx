@@ -1,12 +1,20 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient'; // Import LinearGradient from expo-linear-gradient
-import { Colors } from "./../../constants/Colors"; // Ensure this path is correct
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient'; 
+import { Colors } from './../../constants/Colors'; 
+import { useRouter } from 'expo-router'; // Import useRouter
 
 const { width } = Dimensions.get('window');
 
 export default function StartNewTripCard({ onClose }) {
+  const router = useRouter(); // Initialize router
+
+  const handlePress = () => {
+    router.push('/create-trip/search-place');
+    onClose(); // Hide card on navigation
+  };
+
   return (
     <View style={styles.card}>
       <TouchableOpacity style={styles.closeIcon} onPress={onClose}>
@@ -15,7 +23,10 @@ export default function StartNewTripCard({ onClose }) {
       <MaterialIcons name="flight-takeoff" size={width * 0.2} color={Colors.light.primary} />
       <Text style={styles.heading}>No trips Planned Yet</Text>
       <Text style={styles.subtext}>Looks like it's time to plan a new travel experience! Get started below.</Text>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handlePress} // Handle press with navigation and close
+      >
         <LinearGradient
           colors={[Colors.light.greenTint, Colors.dark.greenTint]}
           style={styles.gradient}
@@ -50,7 +61,7 @@ const styles = StyleSheet.create({
   closeIcon: {
     position: 'absolute',
     top: 10,
-    right: 10, // Change to `left: 10` for left corner placement
+    right: 10, // Adjust position as needed
     backgroundColor: Colors.light.greenTint,
     borderRadius: 20, // Adjust to make it round
     padding: 5, // Adjust to control the size of the circle
@@ -76,7 +87,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     marginTop: 20,
-    overflow: 'hidden', 
+    overflow: 'hidden',
   },
   gradient: {
     flexDirection: "row",
