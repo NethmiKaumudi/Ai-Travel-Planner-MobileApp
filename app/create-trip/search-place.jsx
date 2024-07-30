@@ -60,6 +60,9 @@ const SearchPlace = () => {
       ...prevTripData,
       selectedPlace: place // Set the selected place in tripData
     }));
+
+    // Navigate to the SelectTraveler page
+    router.push('/create-trip/select-traveler');
   };
 
   return (
