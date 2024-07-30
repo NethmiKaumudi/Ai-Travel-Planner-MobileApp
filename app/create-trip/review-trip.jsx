@@ -12,7 +12,7 @@ export default function ReviewTrip() {
   const { tripData } = useContext(CreateTripContext);
 
   const handleBuildTrip = () => {
-    router.push('/BuildTrip'); // Update with the actual screen path
+    router.push('/create-trip/genarete-trip'); // Update with the actual screen path
   };
 
   return (
