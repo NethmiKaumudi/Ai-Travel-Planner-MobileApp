@@ -37,7 +37,7 @@ export default function StartPage() {
   );
 }
 
-const { height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 520, // Adjust height as needed
+    height: height * 0.55, // Adjust height to 55% of the screen height
     resizeMode: 'cover',
   },
   overlay: {
@@ -58,43 +58,45 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(144, 238, 144, 0.9)', // Light green with slight opacity
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 20,
+    padding: width * 0.05, // 5% of screen width
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
   textContainer: {
     alignItems: 'center',
-    width: '100%',
+    width: '90%', // Make text container responsive
     maxWidth: 350,
     backgroundColor: Colors.dark.greenTint,
     borderRadius: 20,
-    padding: 40,
+    padding: width * 0.05, // 5% of screen width
     elevation: 5,
   },
   title: {
-    fontSize: 28,
+    fontSize: width * 0.08, // 8% of screen width
     fontFamily: 'outfit-bold',
     color: Colors.white,
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: height * 0.02, // 2% of screen height
   },
   description: {
-    fontSize: 18,
+    fontSize: width * 0.04, // 5% of screen width
     color: Colors.white,
     textAlign: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 10,
+    marginBottom: height * 0.03, // 3% of screen height
+    paddingHorizontal: width * 0.05, // 5% of screen width
   },
   button: {
     backgroundColor: Colors.primary,
-    paddingVertical: 16,
-    paddingHorizontal: 34,
+    paddingVertical: height * 0.02, // 2% of screen height
+    paddingHorizontal: width * 0.1, // 10% of screen width
     borderRadius: 25,
-    marginBottom: 20,
+    marginBottom: height * 0.02, // 2% of screen height
+    width: '100%', // Make button fit the width of its container
+    alignItems: 'center',
   },
   buttonText: {
-    fontSize: 15,
+    fontSize: width * 0.04, // 4% of screen width
     color: Colors.white,
     textAlign: 'center',
     fontFamily: 'outfit-bold',
