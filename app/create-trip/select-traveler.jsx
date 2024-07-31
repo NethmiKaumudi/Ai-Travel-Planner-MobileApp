@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for icons
 import { Colors } from './../../constants/Colors'; // Ensure the path is correct
 import { CreateTripContext } from './../../context/CreateTripContext'; // Ensure the path is correct
 import { useRouter } from 'expo-router'; // Import useRouter
+import { TRAVELER_OPTIONS } from './../../constants/Options'; // Import the options
 
 const { width } = Dimensions.get('window');
 
@@ -32,30 +33,15 @@ export default function SelectTraveler() {
       </View>
       <Text style={styles.subtitle}>Choose Your Travelers</Text>
       <ScrollView contentContainerStyle={styles.optionsContainer}>
-        <OptionButton
-          label="Just Me"
-          icon="person-outline"
-          isSelected={selectedOption === 'Just Me'}
-          onPress={() => handleSelectOption('Just Me')}
-        />
-        <OptionButton
-          label="A Couple"
-          icon="heart-outline"
-          isSelected={selectedOption === 'A Couple'}
-          onPress={() => handleSelectOption('A Couple')}
-        />
-        <OptionButton
-          label="Family (2 to 5 People)"
-          icon="people-outline"
-          isSelected={selectedOption === 'Family (2 to 5 People)'}
-          onPress={() => handleSelectOption('Family (2 to 5 People)')}
-        />
-        <OptionButton
-          label="Friends"
-          icon="beer-outline"
-          isSelected={selectedOption === 'Friends'}
-          onPress={() => handleSelectOption('Friends')}
-        />
+        {TRAVELER_OPTIONS.map((option) => (
+          <OptionButton
+            key={option.value}
+            label={option.label}
+            icon={option.icon}
+            isSelected={selectedOption === option.value}
+            onPress={() => handleSelectOption(option.value)}
+          />
+        ))}
       </ScrollView>
     </View>
   );

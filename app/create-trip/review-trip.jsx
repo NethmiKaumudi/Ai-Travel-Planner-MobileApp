@@ -68,10 +68,10 @@ export default function ReviewTrip() {
 
 const DetailItem = ({ icon, label, value }) => (
   <View style={styles.detailItem}>
-    <Ionicons name={icon} size={24} color={Colors.primary} style={styles.icon} />
+    <Ionicons name={icon} size={30} color={Colors.primary} style={styles.icon} />
     <View style={styles.detailTextContainer}>
       <Text style={styles.detailLabel}>{label}</Text>
-      <Text style={styles.detailValue} numberOfLines={1} ellipsizeMode='tail'>
+      <Text style={styles.detailValue} numberOfLines={0}>
         {value}
       </Text>
     </View>
@@ -95,7 +95,10 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   title: {
-    fontSize: width * 0.07,
+    fontSize: width * 0.08,
+    marginTop: 30,
+    marginLeft: -30,
+
     fontWeight: 'bold',
     color: Colors.primary,
     flex: 1,
@@ -110,13 +113,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   subtitle: {
-    fontSize: width * 0.05,
+    fontSize: width * 0.06,
     fontWeight: 'bold',
     color: Colors.primary,
     textAlign: 'center',
   },
   boxContainer: {
     flex: 1,
+    marginTop: 20, // Added margin-top here
     marginBottom: 30,
   },
   box: {
@@ -132,7 +136,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
     marginHorizontal: 10,
-    maxHeight: height * 0.7,
   },
   detailsContainer: {
     marginBottom: 20,
@@ -152,12 +155,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   detailLabel: {
-    fontSize: width * 0.045,
+    fontSize: width * 0.050,
     color: Colors.light.text,
-    flex: 1,
+    flexShrink: 0, // Ensures the label doesn't break
+    marginRight: 10,
   },
   detailValue: {
-    fontSize: width * 0.045,
+    fontSize: width * 0.046,
     color: Colors.primary,
     fontWeight: 'bold',
     flexShrink: 1,

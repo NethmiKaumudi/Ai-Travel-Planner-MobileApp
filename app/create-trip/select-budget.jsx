@@ -1,9 +1,12 @@
+// src/screens/Budget.js
+
 import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for icons
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from './../../constants/Colors'; // Ensure the path is correct
 import { CreateTripContext } from './../../context/CreateTripContext'; // Ensure the path is correct
 import { useRouter } from 'expo-router'; // Import useRouter
+import { BUDGET_OPTIONS } from './../../constants/Options'; // Import budget options
 
 const { width } = Dimensions.get('window');
 
@@ -32,24 +35,15 @@ export default function Budget() {
       </View>
       <Text style={styles.subtitle}>Choose Spending Habits for your trip</Text>
       <View style={styles.optionsContainer}>
-        <OptionButton
-          label="Cheap"
-          icon="wallet-outline"
-          isSelected={selectedBudget === 'Cheap'}
-          onPress={() => handleSelectBudget('Cheap')}
-        />
-        <OptionButton
-          label="Moderate"
-          icon="cash-outline"
-          isSelected={selectedBudget === 'Moderate'}
-          onPress={() => handleSelectBudget('Moderate')}
-        />
-        <OptionButton
-          label="Luxury"
-          icon="diamond-outline"
-          isSelected={selectedBudget === 'Luxury'}
-          onPress={() => handleSelectBudget('Luxury')}
-        />
+        {BUDGET_OPTIONS.map((option) => (
+          <OptionButton
+            key={option.value}
+            label={option.label}
+            icon={option.icon}
+            isSelected={selectedBudget === option.value}
+            onPress={() => handleSelectBudget(option.value)}
+          />
+        ))}
       </View>
     </View>
   );
@@ -78,7 +72,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginBottom: 20,
-    marginTop: 30, // Space for top area
+    marginTop: 30,
   },
   iconButton: {
     marginRight: 20,
@@ -109,15 +103,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.background,
     marginBottom: 10,
     alignItems: 'center',
-    flexDirection: 'row', // Align icon and text horizontally
+    flexDirection: 'row',
   },
   optionButtonSelected: {
-    backgroundColor: Colors.primary, // Change background color when selected
+    backgroundColor: Colors.primary,
   },
   optionText: {
     fontSize: width * 0.04,
     color: Colors.primary,
-    marginLeft: 10, // Space between icon and text
+    marginLeft: 10,
   },
   optionTextSelected: {
     color: Colors.light.background,

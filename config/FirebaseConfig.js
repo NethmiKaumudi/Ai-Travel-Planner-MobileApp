@@ -2,6 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -14,7 +16,7 @@ const firebaseConfig = {
   storageBucket: "mobile-app-ai-travel-planner.appspot.com",
   messagingSenderId: "841664431483",
   appId: "1:841664431483:web:80348056dddf9cc85f29de",
-  measurementId: "G-89TV6QYWMR"
+  measurementId: "G-89TV6QYWMR",
 };
 
 // Initialize Firebase
@@ -22,5 +24,6 @@ const firebaseConfig = {
 // const analytics = getAnalytics(app);
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-export { app, auth };
+export { app, auth, db };
