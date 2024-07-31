@@ -11,6 +11,7 @@ import { getAuth } from "firebase/auth";
 export default function MyTripScreen() {
   const [showStartNewTripCard, setShowStartNewTripCard] = useState(false);
   const [trips, setTrips] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleAddButtonPress = () => {
     setShowStartNewTripCard(true);
@@ -21,29 +22,50 @@ export default function MyTripScreen() {
   };
 
   useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const user = getAuth().currentUser;
-        if (!user) throw new Error("User not authenticated");
-        const email = user.email;
+  const fetchTrips = async () => {
+    try {
+      const user = getAuth().currentUser;
+      if (!user) throw new Error("User not authenticated");
+      const email = user.email;
 
-        // Query trips from Firestore
-        const q = query(collection(db, "userTrips"), where("email", "==", email), orderBy("timestamp", "desc"));
-        const querySnapshot = await getDocs(q);
+      console.log("Fetching trips for email:", email);
 
-        const fetchedTrips = [];
-        querySnapshot.forEach((doc) => {
-          fetchedTrips.push({ id: doc.id, ...doc.data() });
-        });
+      // Query trips from Firestore
+      const q = query(
+        collection(db, "usersTrips"),
+        where("email", "==", email),
+        orderBy("timestamp", "desc")
+      );
+      const querySnapshot = await getDocs(q);
 
-        setTrips(fetchedTrips);
-      } catch (error) {
+      if (querySnapshot.empty) {
+        console.log("No trips found.");
+      }
+
+      const fetchedTrips = [];
+      querySnapshot.forEach((doc) => {
+        fetchedTrips.push({ id: doc.id, ...doc.data() });
+      });
+
+      // Log the full content of fetchedTrips
+      console.log("Fetched trips:", JSON.stringify(fetchedTrips, null, 2));
+
+      setTrips(fetchedTrips);
+
+    } catch (error) {
+      console.error("Error fetching trips:", error);
+      if (error.code === 'failed-precondition') {
+        setError(
+          "The query requires an index. You can create it here: https://console.firebase.google.com/v1/r/project/mobile-app-ai-travel-planner/firestore/indexes?create_composite=Cl5wcm9qZWN0cy9tb2JpbGUtYXBwLWFpLXRyYXZlbC1wbGFubmVyL2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy91c2VyVHJpcHMvaW5kZXhlcy9fEAEaCQoFZW1haWwQARoNCgl0aW1lc3RhbXAQAhoMCghfX25hbWVfXxAC"
+        );
+      } else {
         console.error("Error fetching trips:", error);
       }
-    };
+    }
+  };
 
-    fetchTrips();
-  }, []);
+  fetchTrips();
+}, []);
 
   return (
     <View style={styles.container}>
@@ -57,7 +79,11 @@ export default function MyTripScreen() {
         <StartNewTripCard onClose={handleCloseCard} />
       ) : (
         <View style={styles.tripContent}>
-          {trips.length === 0 ? (
+          {error ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : trips.length === 0 ? (
             <View style={styles.emptyStateContainer}>
               <Text style={styles.emptyText}>No trips available.</Text>
               <Text style={styles.emptyText}>Click '+' to create a new trip.</Text>
@@ -122,6 +148,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: Colors.light.text,
     textAlign: "center",
+    marginBottom: 10,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    color: 'red',
+    textAlign: 'center',
     marginBottom: 10,
   },
 });

@@ -5,7 +5,7 @@ import { CreateTripContext } from "../../context/CreateTripContext";
 import { AI_PROMPT } from "../../constants/Options"; // Import AI_PROMPT
 import { chatSession } from "../../config/AiModel";
 import { auth, db } from "../../config/FirebaseConfig"; // Import Firebase config
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore"; // Ensure correct imports
 import { getAuth } from "firebase/auth";
 
 export default function GenerateTrip() {
@@ -25,7 +25,7 @@ export default function GenerateTrip() {
       } = tripData;
 
       const days = travelDates.duration || "0";
-      const nights = travelDates.duration - 1 || "0"; // Assuming nights are days - 1
+      const nights = (travelDates.duration - 1) || "0"; // Assuming nights are days - 1
 
       // Simplified prompt construction
       const prompt = AI_PROMPT.replace("{location}", selectedPlace.place_name)
@@ -35,6 +35,7 @@ export default function GenerateTrip() {
         .replace("{budget}", budget)
         .replace("{totalDays}", days)
         .replace("{totalNights}", nights);
+        
 
       console.log('Prompt:', prompt); // Debugging: Check the prompt being sent
 
@@ -44,7 +45,7 @@ export default function GenerateTrip() {
 
         // Generate AI response
         const result = await chatSession.sendMessage(prompt);
-        const aiResponse = await result.response.text();
+        const aiResponseText = await result.response.text();
 
         // Log time taken
         console.log('AI Response Time:', Date.now() - startTime, 'ms');
@@ -52,7 +53,7 @@ export default function GenerateTrip() {
         // Parse AI response (assuming JSON format)
         let parsedResponse;
         try {
-          parsedResponse = JSON.parse(aiResponse);
+          parsedResponse = JSON.parse(aiResponseText);
         } catch (parseError) {
           console.error("Error parsing AI response:", parseError);
           parsedResponse = {}; // Fallback to empty object
@@ -64,10 +65,10 @@ export default function GenerateTrip() {
         const email = user.email;
 
         // Save tripData to Firestore with auto-generated document ID
-        await addDoc(collection(db, "userTrips"), {
-          ...tripData,
-          ...parsedResponse,
-          aiResponse,
+        const docId = Date.now().toString();
+        await setDoc(doc(db, "usersTrips", docId), {
+          tripData,
+          aiResponse: parsedResponse,
           email, // Include email in the document data
           timestamp: new Date().toISOString(),
         });
@@ -83,7 +84,7 @@ export default function GenerateTrip() {
     };
 
     generateAiTrip();
-  }, []);
+  }, [tripData]);
 
   return (
     <View style={styles.container}>
