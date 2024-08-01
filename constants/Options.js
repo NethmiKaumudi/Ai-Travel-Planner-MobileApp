@@ -44,7 +44,7 @@ export const BUDGET_OPTIONS = [
 export const AI_PROMPT = `
 Generate Travel Plan for Location: {location},
 for {totalDays} Days and {totalNights} Night for {traveler}
-with a {budget} budget destination imageurl with a Flight Details, Flight Price with Booking URL,
+with a {budget} budget destination imageurl, startdate ,enddate with a Flight Details, Flight Price with Booking URL,
 Hotels Option list with hotel names, hotel address, price, hotel image URL, geo coordinates, rating, description
 and places to visit nearby with place name, place details, place image URL, geo coordinates, ticket pricing,
 time to travel each of the location for {totalDays} days and {totalNights} nights with each day plan with best time to visit,

@@ -8,18 +8,24 @@ import { useRouter } from "expo-router";
 import tripImage from "./../../assets/images/mytrip.png"; // Update this path as needed
 
 const UserTripList = ({ trips }) => {
-  
   const router = useRouter();
-  console.log("UserTripList trips:", trips);
+  console.log("UserTripList trips:", JSON.stringify(trips, null, 2));
 
   const handleSeeYourPlan = (tripData) => {
+    console.log("handleSeeYourPlan called");
     console.log("UserTripList handleSeeYourPlan tripData:", tripData);
     router.push({
       pathname: "/trip-details",
-      params: { tripData: JSON.stringify(tripData) }, // Convert tripData to a JSON string
+      // params: { tripData: tripData},
     });
   };
-  
+
+  const formatDate = (date) => {
+    if (!date) return "No data available";
+    // Customize the date format as needed
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(date).toLocaleDateString(undefined, options);
+  };
 
   return (
     <View style={styles.container}>
@@ -35,8 +41,7 @@ const UserTripList = ({ trips }) => {
               <Icon name="place" size={20} color={Colors.light.icon} />
               <Text style={styles.tripDetail}>
                 Destination:{" "}
-                {trips[0]?.tripData?.selectedPlace?.place_name ||
-                  "No data available"}
+                {trips[0]?.tripData?.destination || "No data available"}
               </Text>
             </View>
             <View style={styles.detailContainer}>
@@ -55,9 +60,14 @@ const UserTripList = ({ trips }) => {
             <View style={styles.detailContainer}>
               <Icon name="calendar-today" size={20} color={Colors.light.icon} />
               <Text style={styles.tripDetail}>
-                Travel Dates: {trips[0]?.tripData?.travelDates?.startDate} to{" "}
-                {trips[0]?.tripData?.travelDates?.endDate ||
-                  "No data available"}
+                Travel Dates: {formatDate(trips[0]?.tripData?.startdate)} to{" "}
+                {formatDate(trips[0]?.tripData?.enddate)}
+              </Text>
+            </View>
+            <View style={styles.detailContainer}>
+              <Icon name="access-time" size={20} color={Colors.light.icon} />
+              <Text style={styles.tripDetail}>
+                Duration: {trips[0]?.tripData?.duration || "No data available"}
               </Text>
             </View>
           </View>
@@ -65,7 +75,10 @@ const UserTripList = ({ trips }) => {
           {/* "See Your Plan" Button */}
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleSeeYourPlan(trips[0]?.tripData)}
+            onPress={() => {
+              console.log("Button pressed");
+              handleSeeYourPlan(trips[0]?.tripData);
+            }}
           >
             <Text style={styles.buttonText}>See Your Plan</Text>
           </TouchableOpacity>
@@ -78,7 +91,7 @@ const UserTripList = ({ trips }) => {
               <Image
                 source={{
                   uri:
-                    trip.tripData?.imageURL ||
+                    trip.tripData?.image_url ||
                     "https://assets.vogue.com/photos/6603d64d13a27b5703522946/master/w_2560%2Cc_limit/509288876",
                 }}
                 style={styles.tripImage}
@@ -88,8 +101,7 @@ const UserTripList = ({ trips }) => {
                 <Icon name="place" size={20} color={Colors.white} />
                 <Text style={styles.tripDetail}>
                   Destination:{" "}
-                  {trip.tripData?.selectedPlace?.place_name ||
-                    "No data available"}
+                  {trip.tripData?.destination || "No data available"}
                 </Text>
               </View>
               <View style={styles.detailContainer}>
@@ -107,8 +119,14 @@ const UserTripList = ({ trips }) => {
               <View style={styles.detailContainer}>
                 <Icon name="calendar-today" size={20} color={Colors.white} />
                 <Text style={styles.tripDetail}>
-                  Travel Dates: {trip.tripData?.travelDates?.startDate} to{" "}
-                  {trip.tripData?.travelDates?.endDate || "No data available"}
+                  Travel Dates: {formatDate(trip.tripData?.startdate)} to{" "}
+                  {formatDate(trip.tripData?.enddate)}
+                </Text>
+              </View>
+              <View style={styles.detailContainer}>
+                <Icon name="access-time" size={20} color={Colors.white} />
+                <Text style={styles.tripDetail}>
+                  Duration: {trip.tripData?.duration || "No data available"}
                 </Text>
               </View>
             </View>
@@ -152,6 +170,7 @@ const styles = StyleSheet.create({
     fontFamily: "outfit-regular",
     color: Colors.light.text,
     marginLeft: 10,
+    flexShrink: 1, // Allow text to shrink if it overflows
   },
   button: {
     backgroundColor: Colors.light.primary,

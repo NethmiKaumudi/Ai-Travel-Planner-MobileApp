@@ -144,21 +144,21 @@ export default function GenerateTrip() {
   const router = useRouter();
   const { tripData } = useContext(CreateTripContext);
   const [loading, setLoading] = useState(true);
-
+  
   useEffect(() => {
     const generateAiTrip = async () => {
       if (!tripData) return;
-
+  
       const {
         selectedPlace = { place_name: "N/A" },
         travelDates = { duration: 0 },
         travelers = "N/A",
         budget = "N/A"
       } = tripData;
-
+  
       const days = travelDates.duration || "0";
       const nights = (travelDates.duration - 1) || "0";
-
+  
       const prompt = AI_PROMPT.replace("{location}", selectedPlace.place_name)
         .replace("{totalDays}", days)
         .replace("{totalNights}", nights)
@@ -166,37 +166,35 @@ export default function GenerateTrip() {
         .replace("{budget}", budget)
         .replace("{totalDays}", days)
         .replace("{totalNights}", nights);
-
+  
       console.log('Prompt:', prompt);
-
+  
       try {
         const startTime = Date.now();
         const result = await chatSession.sendMessage(prompt);
         const aiResponseText = await result.response.text();
         console.log('AI Response Time:', Date.now() - startTime, 'ms');
-
+  
         let parsedResponse;
         try {
           parsedResponse = JSON.parse(aiResponseText);
         } catch (parseError) {
           console.error("Error parsing AI response:", parseError);
-          parsedResponse = {};
+          parsedResponse = {}; // Default to an empty object in case of parsing error
         }
-
+  
         const user = getAuth().currentUser;
         if (!user) throw new Error("User not authenticated");
+  
         const email = user.email;
-
         const docId = Date.now().toString();
         await setDoc(doc(db, "usersTrips", docId), {
-          tripData,
-          aiResponse: parsedResponse,
+          tripData:parsedResponse,
           email,
           timestamp: new Date().toISOString(),
         });
-
+  
         console.log("Trip data saved successfully!");
-
       } catch (error) {
         console.error("Error during AI trip generation or Firestore operation:", error);
       } finally {
@@ -204,9 +202,10 @@ export default function GenerateTrip() {
         router.push('/(tabs)/mytrip');
       }
     };
-
+  
     generateAiTrip();
   }, [tripData]);
+  
 
   return (
     <View style={styles.container}>
