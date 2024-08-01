@@ -2,18 +2,24 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Colors } from "./../../constants/Colors"; // Ensure this path is correct
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import Material Icons
-import { useRouter } from '@react-navigation/native'; // Import useRouter
+import { useRouter } from "expo-router";
 
 // Import your image
 import tripImage from "./../../assets/images/mytrip.png"; // Update this path as needed
 
 const UserTripList = ({ trips }) => {
-  const router = useRouter(); // Initialize router
+  
+  const router = useRouter();
+  console.log("UserTripList trips:", trips);
 
-  // Handler for navigating to TripDetails
-  const handleSeeYourPlan = () => {
-    router.navigate('/trip-details/index.js'); // Replace 'TripDetails' with the correct route name
+  const handleSeeYourPlan = (tripData) => {
+    console.log("UserTripList handleSeeYourPlan tripData:", tripData);
+    router.push({
+      pathname: "/trip-details",
+      params: { tripData: JSON.stringify(tripData) }, // Convert tripData to a JSON string
+    });
   };
+  
 
   return (
     <View style={styles.container}>
@@ -57,7 +63,10 @@ const UserTripList = ({ trips }) => {
           </View>
 
           {/* "See Your Plan" Button */}
-          <TouchableOpacity style={styles.button} onPress={handleSeeYourPlan}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleSeeYourPlan(trips[0]?.tripData)}
+          >
             <Text style={styles.buttonText}>See Your Plan</Text>
           </TouchableOpacity>
 
@@ -69,7 +78,7 @@ const UserTripList = ({ trips }) => {
               <Image
                 source={{
                   uri:
-                    trip.tripData?.imaeURL ||
+                    trip.tripData?.imageURL ||
                     "https://assets.vogue.com/photos/6603d64d13a27b5703522946/master/w_2560%2Cc_limit/509288876",
                 }}
                 style={styles.tripImage}
