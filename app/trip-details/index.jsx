@@ -146,49 +146,46 @@ const TripDetails = () => {
         </TouchableOpacity>
         <Text style={styles.title}>My Trip Plan</Text>
       </View>
-      {/* {tripDetails.image_url ? (
-        <Image source={{ uri: tripDetails.image_url }} style={styles.image} />
-      ) : (
-        <Text style={styles.emptyMessage}>No image available.</Text>
-      )} */}
       <Text style={styles.destination}>{tripDetails.destination}</Text>
       <View style={styles.detailsContainer}>
-        <Text style={styles.sectionTitle}>
-          <Icon name="calendar-today" size={24} color={Colors.primary} /> Trip Details:
-        </Text>
-        <View style={styles.detailRow}>
-          <Icon name="calendar-today" size={20} color={Colors.primary} />
-          <Text style={styles.detailText}>
-            Start Date: {tripDetails.startdate || "N/A"}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            Trip Details:
           </Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Icon name="calendar-today" size={20} color={Colors.primary} />
-          <Text style={styles.detailText}>
-            End Date: {tripDetails.enddate || "N/A"}
-          </Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Icon name="people" size={20} color={Colors.primary} />
-          <Text style={styles.detailText}>
-            Travelers: {tripDetails.travelers || "N/A"}
-          </Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Icon name="timer" size={20} color={Colors.primary} />
-          <Text style={styles.detailText}>
-            Duration: {tripDetails.duration || "N/A"}
-          </Text>
-        </View>
-        <View style={styles.detailRow}>
-          <Icon name="attach-money" size={20} color={Colors.primary} />
-          <Text style={styles.detailText}>
-            Budget: {tripDetails.budget || "N/A"}
-          </Text>
+          <View style={styles.detailRow}>
+            <Icon name="calendar-today" size={20} color={Colors.primary} />
+            <Text style={styles.detailText}>
+              Start Date: {tripDetails.startdate || "N/A"}
+            </Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Icon name="calendar-today" size={20} color={Colors.primary} />
+            <Text style={styles.detailText}>
+              End Date: {tripDetails.enddate || "N/A"}
+            </Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Icon name="people" size={20} color={Colors.primary} />
+            <Text style={styles.detailText}>
+              Travelers: {tripDetails.travelers || "N/A"}
+            </Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Icon name="timer" size={20} color={Colors.primary} />
+            <Text style={styles.detailText}>
+              Duration: {tripDetails.duration || "N/A"}
+            </Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Icon name="attach-money" size={20} color={Colors.primary} />
+            <Text style={styles.detailText}>
+              Budget: {tripDetails.budget || "N/A"}
+            </Text>
+          </View>
         </View>
 
         <View style={styles.flightContainer}>
-        <Text style={styles.sectionTitle}>Flight Details:</Text>
+          <Text style={styles.sectionTitle}>Flight Details:</Text>
           <Text style={styles.detailText}>
             Airline: {tripDetails.flight_details?.airline || "N/A"}
           </Text>
@@ -205,12 +202,6 @@ const TripDetails = () => {
           <Text style={styles.detailText}>
             Price: ${tripDetails.flight_details?.price || "N/A"}
           </Text>
-          {/* <Icon
-          name="flight-takeoff"
-          size={50}
-          color={Colors.primary}
-          style={styles.icon}
-        /> */}
           <TouchableOpacity
             style={styles.bookButton}
             onPress={handleBookFlight}
@@ -219,37 +210,43 @@ const TripDetails = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={styles.sectionTitle}>Hotels:</Text>
-      {tripDetails.hotels && tripDetails.hotels.length > 0 ? (
-        renderArrayItems(
-          tripDetails.hotels,
-          HotelDetails,
-          "No hotel details available.",
-          "hotel"
-        )
-      ) : (
-        <Text style={styles.emptyMessage}>No hotels available.</Text>
-      )}
-      <Text style={styles.sectionTitle}>Places to Visit:</Text>
-      {tripDetails.places_to_visit &&
-      Array.isArray(tripDetails.places_to_visit) &&
-      tripDetails.places_to_visit.length > 0 ? (
-        renderArrayItems(
-          tripDetails.places_to_visit,
-          PlaceDetails,
-          "No places to visit available.",
-          "place"
-        )
-      ) : (
-        <Text style={styles.emptyMessage}>No places to visit available.</Text>
-      )}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Hotels:</Text>
+        {tripDetails.hotels && tripDetails.hotels.length > 0 ? (
+          renderArrayItems(
+            tripDetails.hotels,
+            HotelDetails,
+            "No hotel details available.",
+            "hotel"
+          )
+        ) : (
+          <Text style={styles.emptyMessage}>No hotels available.</Text>
+        )}
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Places to Visit:</Text>
+        {tripDetails.places_to_visit &&
+        Array.isArray(tripDetails.places_to_visit) &&
+        tripDetails.places_to_visit.length > 0 ? (
+          renderArrayItems(
+            tripDetails.places_to_visit,
+            PlaceDetails,
+            "No places to visit available.",
+            "place"
+          )
+        ) : (
+          <Text style={styles.emptyMessage}>No places to visit available.</Text>
+        )}
+      </View>
 
-      <Text style={styles.sectionTitle}>Daily Plan:</Text>
-      {tripDetails.day_plan && Array.isArray(tripDetails.day_plan) ? (
-        <DailyPlan dailyPlan={tripDetails.day_plan} />
-      ) : (
-        <Text style={styles.emptyMessage}>No daily plans available.</Text>
-      )}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Daily Plan:</Text>
+        {tripDetails.day_plan && Array.isArray(tripDetails.day_plan) ? (
+          <DailyPlan dailyPlan={tripDetails.day_plan} />
+        ) : (
+          <Text style={styles.emptyMessage}>No daily plans available.</Text>
+        )}
+      </View>
     </ScrollView>
   );
 };
@@ -264,36 +261,44 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
+    justifyContent: "center",
   },
   iconButton: {
-    marginRight: 12,
+    position: "absolute",
+    left: 16,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: Colors.primary,
-  },
-  image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 8,
-    marginBottom: 16,
-  },
-  destination: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: Colors.primary,
-    marginBottom: 16,
-  },
-  detailsContainer: {
-    marginBottom: 16,
-  },
-  sectionTitle: {
     fontSize: 25,
     fontWeight: "bold",
     color: Colors.primary,
+    textAlign: "center",
+    marginTop:20,
+  },
+  destination: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: Colors.primary,
     marginBottom: 8,
-    marginLeft:80,
+    textAlign: "center",
+  },
+  detailsContainer: {
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+  },
+  section: {
+    backgroundColor: '#e0f7fa',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: Colors.primary,
+    marginBottom: 8,
+    textAlign:"center"
   },
   detailRow: {
     flexDirection: "row",
@@ -301,53 +306,45 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   detailText: {
-    fontSize: 16,
-    color: '#333',
     marginLeft: 8,
-  },
-  emptyMessage: {
     fontSize: 16,
-    color: '#999',
-    textAlign: 'center',
-    marginTop: 16,
   },
-  loading: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    flexGrow: 1,
-  },
-  error: {
-    fontSize: 16,
-    color: 'red',
-    textAlign: 'center',
-    marginTop: 16,
+  flightContainer: {
+    backgroundColor: '#fce4ec',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
   },
   bookButton: {
-    marginTop: 16,
-    padding: 12,
     backgroundColor: Colors.primary,
     borderRadius: 8,
+    padding: 12,
     alignItems: "center",
   },
   bookButtonText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: "bold",
+  },
+  emptyMessage: {
+    textAlign: "center",
+    color: '#888',
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  error: {
+    textAlign: "center",
+    color: 'red',
+    fontSize: 16,
   },
   itemContainer: {
     marginBottom: 16,
   },
-  flightContainer: {
-    marginTop: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    backgroundColor: '#f9f9f9',
-  },
   icon: {
-    marginLeft:250,
-    // marginTop:20
+    marginRight: 8,
   },
 });
 
