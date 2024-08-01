@@ -18,18 +18,14 @@ import HotelDetails from "./../../components/TripDetails/HotelDetails";
 import PlaceDetails from "./../../components/TripDetails/PlaceDetails";
 import DailyPlan from "./../../components/TripDetails/DailyPlans";
 import { Colors } from "./../../constants/Colors";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
-import axios from "axios";
-
-const UNSPLASH_ACCESS_KEY = "mqALTYeQ6QdGjWuvLmD5rOlSG3pzNjmGIls5EJn67MY"; // Replace with your Unsplash API key
 
 const TripDetails = () => {
   const [tripDetails, setTripDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [flightImage, setFlightImage] = useState(null);
-  const [tripImage, setTripImage] = useState(null);
 
   const user = getAuth().currentUser;
   const router = useRouter();
@@ -61,38 +57,13 @@ const TripDetails = () => {
           trips.push({ id: doc.id, ...doc.data() });
         });
 
-        const tripData = trips[0]?.tripData || {};
-        setTripDetails(tripData);
-        setFlightImage(tripData.flight_details?.image_url || null);
-        setTripImage(tripData.image_url || null);
-
-        if (!tripData.image_url) {
-          fetchUnsplashImage(tripData.destination);
-        }
-
+        setTripDetails(trips[0]?.tripData || {});
+        setFlightImage(trips[0]?.tripData?.flight_details?.image_url || null);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching trips:", err);
         setError("Failed to fetch trips. Please try again later.");
         setLoading(false);
-      }
-    };
-
-    const fetchUnsplashImage = async (query) => {
-      try {
-        const response = await axios.get(
-          `https://api.unsplash.com/search/photos`,
-          {
-            params: { query: query, per_page: 1 },
-            headers: {
-              Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
-            },
-          }
-        );
-        const imageUrl = response.data.results[0]?.urls?.regular;
-        setTripImage(imageUrl || null);
-      } catch (err) {
-        console.error("Error fetching Unsplash image:", err);
       }
     };
 
@@ -107,7 +78,8 @@ const TripDetails = () => {
       return;
     }
 
-    const { departure_city, departure_date, flight_number, price } = flightDetails;
+    const { departure_city, departure_date, flight_number, price } =
+      flightDetails;
     const bookingUrl = "https://www.britishairways.com/";
 
     const message = `Flight Details:\n
@@ -169,195 +141,214 @@ const TripDetails = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.iconButton}
-        >
-          <Ionicons name="arrow-back" size={24} color={Colors.white} />
+        <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
+          <Ionicons name="arrow-back" size={24} color={Colors.primary} />
         </TouchableOpacity>
         <Text style={styles.title}>My Trip Plan</Text>
       </View>
+      {/* {tripDetails.image_url ? (
+        <Image source={{ uri: tripDetails.image_url }} style={styles.image} />
+      ) : (
+        <Text style={styles.emptyMessage}>No image available.</Text>
+      )} */}
       <Text style={styles.destination}>{tripDetails.destination}</Text>
       <View style={styles.detailsContainer}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Trip Details:</Text>
-          <View style={styles.detailRow}>
-            <Icon name="calendar-today" size={20} color={Colors.primary} />
-            <Text style={styles.detailText}>
-              Start Date: {tripDetails.startdate || "N/A"}
-            </Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Icon name="calendar-today" size={20} color={Colors.primary} />
-            <Text style={styles.detailText}>
-              End Date: {tripDetails.enddate || "N/A"}
-            </Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Icon name="people" size={20} color={Colors.primary} />
-            <Text style={styles.detailText}>
-              Travelers: {tripDetails.travelers || "N/A"}
-            </Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Icon name="timer" size={20} color={Colors.primary} />
-            <Text style={styles.detailText}>
-              Duration: {tripDetails.duration || "N/A"}
-            </Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Icon name="attach-money" size={20} color={Colors.primary} />
-            <Text style={styles.detailText}>
-              Budget: {tripDetails.budget || "N/A"}
-            </Text>
-          </View>
+        <Text style={styles.sectionTitle}>
+          <Icon name="calendar-today" size={24} color={Colors.primary} /> Trip Details:
+        </Text>
+        <View style={styles.detailRow}>
+          <Icon name="calendar-today" size={20} color={Colors.primary} />
+          <Text style={styles.detailText}>
+            Start Date: {tripDetails.startdate || "N/A"}
+          </Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="calendar-today" size={20} color={Colors.primary} />
+          <Text style={styles.detailText}>
+            End Date: {tripDetails.enddate || "N/A"}
+          </Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="people" size={20} color={Colors.primary} />
+          <Text style={styles.detailText}>
+            Travelers: {tripDetails.travelers || "N/A"}
+          </Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="timer" size={20} color={Colors.primary} />
+          <Text style={styles.detailText}>
+            Duration: {tripDetails.duration || "N/A"}
+          </Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Icon name="attach-money" size={20} color={Colors.primary} />
+          <Text style={styles.detailText}>
+            Budget: {tripDetails.budget || "N/A"}
+          </Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Flight Details:</Text>
-          <View style={styles.flightContainer}>
-            <Text style={styles.detailText}>
-              Airline: {tripDetails.flight_details?.airline || "N/A"}
-            </Text>
-            <Text style={styles.detailText}>
-              Route: {tripDetails.flight_details?.departure_city || "N/A"} to{" "}
-              {tripDetails.flight_details?.arrival_city || "N/A"}
-            </Text>
-            <Text style={styles.detailText}>
-              Departure: {tripDetails.flight_details?.departure_date || "N/A"}
-            </Text>
-            <Text style={styles.detailText}>
-              Flight Number: {tripDetails.flight_details?.flight_number || "N/A"}
-            </Text>
-            <Text style={styles.detailText}>
-              Price: ${tripDetails.flight_details?.price || "N/A"}
-            </Text>
-          </View>
+        <View style={styles.flightContainer}>
+        <Text style={styles.sectionTitle}>Flight Details:</Text>
+          <Text style={styles.detailText}>
+            Airline: {tripDetails.flight_details?.airline || "N/A"}
+          </Text>
+          <Text style={styles.detailText}>
+            Route: {tripDetails.flight_details?.departure_city || "N/A"} to{" "}
+            {tripDetails.flight_details?.arrival_city || "N/A"}
+          </Text>
+          <Text style={styles.detailText}>
+            Departure: {tripDetails.flight_details?.departure_date || "N/A"}
+          </Text>
+          <Text style={styles.detailText}>
+            Arrival: {tripDetails.flight_details?.arrival_date || "N/A"}
+          </Text>
+          <Text style={styles.detailText}>
+            Price: ${tripDetails.flight_details?.price || "N/A"}
+          </Text>
+          {/* <Icon
+          name="flight-takeoff"
+          size={50}
+          color={Colors.primary}
+          style={styles.icon}
+        /> */}
           <TouchableOpacity
-            onPress={handleBookFlight}
             style={styles.bookButton}
+            onPress={handleBookFlight}
           >
             <Text style={styles.bookButtonText}>Book Flight</Text>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hotel Details:</Text>
-          {renderArrayItems(
-            tripDetails.hotels || [],
-            HotelDetails,
-            "No hotel details available."
-          )}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Place Details:</Text>
-          {renderArrayItems(
-            tripDetails.places || [],
-            PlaceDetails,
-            "No place details available."
-          )}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Daily Plans:</Text>
-          {renderArrayItems(
-            tripDetails.daily_plans || [],
-            DailyPlan,
-            "No daily plans available.",
-            "today"
-          )}
-        </View>
       </View>
+      <Text style={styles.sectionTitle}>Hotels:</Text>
+      {tripDetails.hotels && tripDetails.hotels.length > 0 ? (
+        renderArrayItems(
+          tripDetails.hotels,
+          HotelDetails,
+          "No hotel details available.",
+          "hotel"
+        )
+      ) : (
+        <Text style={styles.emptyMessage}>No hotels available.</Text>
+      )}
+      <Text style={styles.sectionTitle}>Places to Visit:</Text>
+      {tripDetails.places_to_visit &&
+      Array.isArray(tripDetails.places_to_visit) &&
+      tripDetails.places_to_visit.length > 0 ? (
+        renderArrayItems(
+          tripDetails.places_to_visit,
+          PlaceDetails,
+          "No places to visit available.",
+          "place"
+        )
+      ) : (
+        <Text style={styles.emptyMessage}>No places to visit available.</Text>
+      )}
+
+      <Text style={styles.sectionTitle}>Daily Plan:</Text>
+      {tripDetails.day_plan && Array.isArray(tripDetails.day_plan) ? (
+        <DailyPlan dailyPlan={tripDetails.day_plan} />
+      ) : (
+        <Text style={styles.emptyMessage}>No daily plans available.</Text>
+      )}
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
+    flexGrow: 1,
+    padding: 16,
+    backgroundColor: '#fff',
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: Colors.light.primary,
-    justifyContent: 'center', // Centering content horizontally
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
   },
   iconButton: {
-    position: 'absolute',
-    left: 20, // Positioning the back icon to the left
+    marginRight: 12,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
-    textAlign: "center", // Center the title text
-    color: Colors.white, // Ensure the title color contrasts well
+    color: Colors.primary,
   },
   image: {
     width: "100%",
     height: 200,
-    borderRadius: 10,
-    marginBottom: 20,
+    borderRadius: 8,
+    marginBottom: 16,
   },
   destination: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  detailsContainer: {
-    marginBottom: 20,
-  },
-  section: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
+    color: Colors.primary,
+    marginBottom: 16,
+  },
+  detailsContainer: {
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: Colors.primary,
+    marginBottom: 8,
+    marginLeft:80,
   },
   detailRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 8,
   },
   detailText: {
-    marginLeft: 10,
     fontSize: 16,
-  },
-  flightContainer: {
-    marginBottom: 10,
-  },
-  bookButton: {
-    backgroundColor: Colors.primary,
-    padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
-  },
-  bookButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-  itemContainer: {
-    marginBottom: 10,
+    color: '#333',
+    marginLeft: 8,
   },
   emptyMessage: {
     fontSize: 16,
-    color: Colors.grey,
-    textAlign: "center",
+    color: '#999',
+    textAlign: 'center',
+    marginTop: 16,
   },
   loading: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    flexGrow: 1,
   },
   error: {
     fontSize: 16,
-    color: "red",
-    textAlign: "center",
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+  bookButton: {
+    marginTop: 16,
+    padding: 12,
+    backgroundColor: Colors.primary,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  bookButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  itemContainer: {
+    marginBottom: 16,
+  },
+  flightContainer: {
+    marginTop: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9',
+  },
+  icon: {
+    marginLeft:250,
+    // marginTop:20
   },
 });
-
 
 export default TripDetails;
