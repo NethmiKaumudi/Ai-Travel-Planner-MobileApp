@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
-import { Colors } from "./../../constants/Colors"; // Ensure this path is correct
-import { getAuth } from "firebase/auth";
-import { db } from "./../../config/FirebaseConfig"; // Ensure this path is correct
-import { collection, query, where, getDocs } from "firebase/firestore";
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
+import { getAuth } from 'firebase/auth';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from './../../config/FirebaseConfig'; // Update this path as needed
+import { useRouter } from 'expo-router';
+import UserTripList from './../../components/MyTrips/UserTripList'; // Update this path as needed
+import StartNewTripCard from './../../components/MyTrips/StartNewTripCard'; // Update this path as needed
+import { Colors } from './../../constants/Colors'; // Update this path as needed
 
-const TripDetails = () => {
-  const [tripDetails, setTripDetails] = useState(null); // Initialize with null
-  const [error, setError] = useState(null);
+const MyTripsPage = () => {
+  const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showStartNewTripCard, setShowStartNewTripCard] = useState(false);
   const user = getAuth().currentUser;
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserTrips = async () => {
@@ -24,21 +29,17 @@ const TripDetails = () => {
 
       try {
         const querySnapshot = await getDocs(q);
-        const trips = [];
+        const fetchedTrips = [];
 
         querySnapshot.forEach((doc) => {
           const tripData = doc.data();
-          // Convert the Firestore data to JSON
-          const jsonData = JSON.parse(JSON.stringify(tripData));
-          console.log("Document ID:", doc.id, "=> Data:", jsonData);
-          trips.push({ id: doc.id, ...jsonData });
+          fetchedTrips.push({ id: doc.id, ...tripData });
         });
 
-        if (trips.length > 0) {
-          setTripDetails(trips[0]); // Set the latest trip data
-        } else {
-          setError("No trips found.");
-        }
+        console.log("Fetched trips:", fetchedTrips); // Debug log
+
+        setTrips(fetchedTrips);
+        setShowStartNewTripCard(fetchedTrips.length === 0);
       } catch (error) {
         console.error("Error fetching user trips:", error);
         setError("Error fetching trips. Please try again later.");
@@ -50,160 +51,78 @@ const TripDetails = () => {
     fetchUserTrips();
   }, [user]);
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
+  const handleAddNewTrip = () => {
+    setShowStartNewTripCard(true);
+  };
 
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.noData}>{error}</Text>
-      </View>
-    );
-  }
-
-  if (!tripDetails) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.noData}>No trip data available.</Text>
-      </View>
-    );
-  }
-
-  const dailyPlan = tripDetails.day_plan || [];
-  const hotels = tripDetails.hotels || [];
-  const placesToVisit = tripDetails.places_to_visit || [];
+  const handleCloseNewTripCard = () => {
+    setShowStartNewTripCard(false);
+  };
 
   return (
-    <ScrollView style={styles.container}>
-      <Image
-        source={{ uri: tripDetails.image_url }}
-        style={styles.image}
-        resizeMode="cover"
-      />
-      <Text style={styles.title}>{tripDetails.destination}</Text>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.detailTitle}>Flight Details:</Text>
-        <Text>{tripDetails.flight_details?.airline}</Text>
-        <Text>
-          {tripDetails.flight_details?.departure_city} to{" "}
-          {tripDetails.flight_details?.arrival_city}
-        </Text>
-        <Text>
-          Departure Date: {tripDetails.flight_details?.departure_date}
-        </Text>
-        <Text>
-          Arrival Date: {tripDetails.flight_details?.arrival_date}
-        </Text>
-        <Text>Price: ${tripDetails.flight_details?.price}</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>My Trips</Text>
+        <TouchableOpacity onPress={handleAddNewTrip} style={styles.addButton}>
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.detailTitle}>Hotels:</Text>
-        {hotels.length > 0 ? (
-          hotels.map((hotel, index) => (
-            <View key={index} style={styles.hotelContainer}>
-              <Image source={{ uri: hotel.image_url }} style={styles.hotelImage} />
-              <Text>{hotel.name}</Text>
-              <Text>{hotel.address}</Text>
-              <Text>Rating: {hotel.rating}</Text>
-              <Text>Price: ${hotel.price}</Text>
-            </View>
-          ))
-        ) : (
-          <Text>No hotels available.</Text>
-        )}
-      </View>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.detailTitle}>Places to Visit:</Text>
-        {placesToVisit.length > 0 ? (
-          placesToVisit.map((place, index) => (
-            <View key={index} style={styles.placeContainer}>
-              <Text>{place.name}</Text>
-              <Text>{place.address}</Text>
-              <Text>{place.opening_hours}</Text>
-              <Text>{place.description}</Text>
-            </View>
-          ))
-        ) : (
-          <Text>No places to visit available.</Text>
-        )}
-      </View>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.detailTitle}>Daily Plan:</Text>
-        {dailyPlan.length > 0 ? (
-          dailyPlan.map((dayPlan, index) => (
-            <View key={index} style={styles.dayPlanContainer}>
-              <Text style={styles.dayTitle}>Day {index + 1}</Text>
-              <Text>{dayPlan.activity}</Text>
-              <Text>{dayPlan.time}</Text>
-            </View>
-          ))
-        ) : (
-          <Text>No daily plan available.</Text>
-        )}
-      </View>
-    </ScrollView>
+      {loading ? (
+        <ActivityIndicator size="large" color={Colors.light.primary} />
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <ScrollView style={styles.content}>
+          {showStartNewTripCard ? (
+            <StartNewTripCard onClose={handleCloseNewTripCard} />
+          ) : (
+            <UserTripList trips={trips} />
+          )}
+        </ScrollView>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: Colors.light.background,
   },
-  image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 20,
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: Colors.light.primary,
   },
   title: {
     fontSize: 24,
-    fontFamily: "outfit-bold",
-    color: Colors.light.text,
-    marginBottom: 10,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop:20,
+
   },
-  detailsContainer: {
-    marginBottom: 20,
+  addButton: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 10,
+    marginTop:20,
+
   },
-  detailTitle: {
-    fontSize: 18,
-    fontFamily: "outfit-bold",
-    color: Colors.light.text,
-    marginBottom: 10,
+  addButtonText: {
+    fontSize: 20,
+    color: Colors.light.primary,
   },
-  hotelContainer: {
-    marginBottom: 10,
+  content: {
+    flex: 1,
+    padding: 20,
   },
-  hotelImage: {
-    width: "100%",
-    height: 100,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  placeContainer: {
-    marginBottom: 10,
-  },
-  dayPlanContainer: {
-    marginBottom: 10,
-  },
-  dayTitle: {
-    fontSize: 18,
-    fontFamily: "outfit-bold",
-    color: Colors.light.text,
-    marginBottom: 5,
-  },
-  noData: {
-    fontSize: 18,
-    color: Colors.light.text,
-    textAlign: "center",
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
     marginTop: 20,
   },
 });
 
-export default TripDetails;
+export default MyTripsPage;

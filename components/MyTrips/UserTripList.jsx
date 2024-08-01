@@ -13,7 +13,7 @@ const UserTripList = ({ trips }) => {
 
   const handleSeeYourPlan = (tripData) => {
     console.log("handleSeeYourPlan called");
-    console.log("UserTripList handleSeeYourPlan tripData:", tripData);
+    // console.log("UserTripList handleSeeYourPlan tripData:", tripData);
     router.push({
       pathname: "/trip-details",
       // params: { tripData: tripData},
@@ -34,9 +34,9 @@ const UserTripList = ({ trips }) => {
 
       {trips.length > 0 ? (
         <>
-          {/* Display the latest trip review data */}
-          <View style={styles.reviewContainer}>
-            <Text style={styles.reviewTitle}>Latest Trip Review:</Text>
+          {/* Display the latest trip in a large box */}
+          <View style={styles.latestTripBox}>
+            <Text style={styles.latestTripTitle}>Latest Trip Review:</Text>
             <View style={styles.detailContainer}>
               <Icon name="place" size={20} color={Colors.light.icon} />
               <Text style={styles.tripDetail}>
@@ -70,33 +70,33 @@ const UserTripList = ({ trips }) => {
                 Duration: {trips[0]?.tripData?.duration || "No data available"}
               </Text>
             </View>
-          </View>
 
-          {/* "See Your Plan" Button */}
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              console.log("Button pressed");
-              handleSeeYourPlan(trips[0]?.tripData);
-            }}
-          >
-            <Text style={styles.buttonText}>See Your Plan</Text>
-          </TouchableOpacity>
+            {/* "See Your Plan" Button */}
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                console.log("Button pressed");
+                handleSeeYourPlan(trips[0]?.tripData);
+              }}
+            >
+              <Text style={styles.buttonText}>See Your Plan</Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Display other trips in smaller boxes */}
           <Text style={styles.reviewTitle}>My Trips</Text>
 
           {trips.slice(0).map((trip) => (
             <View key={trip.id} style={styles.tripBox}>
-              <Image
+              {/* <Image
                 source={{
                   uri:
-                    trip.tripData?.image_url ||
+                    trip.tripData?.image_url||
                     "https://assets.vogue.com/photos/6603d64d13a27b5703522946/master/w_2560%2Cc_limit/509288876",
                 }}
                 style={styles.tripImage}
-              />
-              <Text style={styles.tripTitle}>Trip:</Text>
+              /> */}
+              <Text style={styles.tripTitle}>Trips</Text>
               <View style={styles.detailContainer}>
                 <Icon name="place" size={20} color={Colors.white} />
                 <Text style={styles.tripDetail}>
@@ -151,8 +151,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
   },
-  reviewContainer: {
+  latestTripBox: {
+    backgroundColor: Colors.dark.greenTint,
+    padding: 15,
+    borderRadius: 15,
     marginBottom: 20,
+    shadowColor: Colors.light.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  latestTripTitle: {
+    fontSize: 22,
+    fontFamily: "outfit-bold",
+    color: Colors.light.text,
+    marginBottom: 10,
   },
   reviewTitle: {
     fontSize: 20,
@@ -164,6 +178,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
+  },
+  tripTitle:{
+    fontSize: 20,
+    fontFamily: "outfit-bold",
+    textAlign:"center"
   },
   tripDetail: {
     fontSize: 16,
@@ -177,7 +196,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
-    marginBottom: 20,
+    marginTop: 20,
   },
   buttonText: {
     fontSize: 16,

@@ -81,7 +81,7 @@ export default function Discover() {
 
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.item} onPress={() => handleItemPress(item)}>
-      <Image source={{ uri: item.imageUrl }} style={styles.itemImage} />
+      {/* <Image source={{ uri: item.imageUrl }} style={styles.itemImage} /> */}
       <View style={styles.itemDetails}>
         <Text style={styles.itemTitle}>{item.name}</Text>
         <Text style={styles.itemSubtitle}>{item.location}</Text>
