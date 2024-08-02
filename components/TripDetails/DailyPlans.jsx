@@ -1,48 +1,64 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors } from './../../constants/Colors'; // Adjust the path as needed
 
-const DailyPlan = ({ dailyPlan }) => (
-  <View style={styles.container}>
-    {dailyPlan?.map((day, index) => (
-      <View key={index} style={styles.dayBox}>
-        <Text style={styles.dayTitle}>Day {index + 1}</Text>
-        <Text style={styles.activityText}>Activity: {day.activity}</Text>
-        <Text style={styles.timeText}>Time: {day.time}</Text>
-      </View>
-    ))}
-  </View>
-);
+const DailyPlan = ({ bestTime, day, plan }) => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.day}>{day}</Text>
+      <Text style={styles.bestTime}>{bestTime}</Text>
+      {plan.map((activity, index) => (
+        <View key={index} style={styles.activityContainer}>
+          <View style={styles.activityBox}>
+            <Text style={styles.activity}>{activity.activity}</Text>
+            <Text style={styles.time}>{activity.time}</Text>
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    backgroundColor: Colors.light.background,
-  },
-  dayBox: {
-    backgroundColor: Colors.light.secondary,
-    borderRadius: 8,
+    marginBottom: 20,
     padding: 15,
-    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: '#f9f9f9',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
   },
-  dayTitle: {
+  day: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.light.text,
     marginBottom: 5,
+    color: '#333',
   },
-  activityText: {
+  bestTime: {
     fontSize: 16,
-    color: Colors.light.text,
+    color: '#555',
+    marginBottom: 10,
   },
-  timeText: {
+  activityContainer: {
+    marginBottom: 10,
+  },
+  activityBox: {
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    borderColor: '#ddd',
+    borderWidth: 1,
+  },
+  activity: {
     fontSize: 16,
-    color: Colors.dark.greenTint,
+    fontWeight: '500',
+    color: '#333',
+  },
+  time: {
+    fontSize: 14,
+    color: '#666',
   },
 });
 

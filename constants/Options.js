@@ -47,7 +47,7 @@ for {totalDays} Days and {totalNights} Night for {traveler}
 with a {budget} budget destination imageurl, startdate ,enddate with a Flight Details, Flight Price with Booking URL,
 Hotels Option list with hotel names, hotel address, price, hotel image URL, geo coordinates, rating, description
 and places to visit nearby with place name, place details, place image URL, geo coordinates, ticket pricing,
-time to travel each of the location for {totalDays} days and {totalNights} nights with each day plan with best time to visit,
+time to travel each of the location for {totalDays} days and {totalNights} nights with each day plan with best time to visit, and show
 famous restaurant to eat with place name, description, image URL, geo coordinates, ratings, menu.
 JSON Format
 `;

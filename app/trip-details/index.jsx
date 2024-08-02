@@ -17,8 +17,9 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import HotelDetails from "./../../components/TripDetails/HotelDetails";
 import PlaceDetails from "./../../components/TripDetails/PlaceDetails";
 import DailyPlan from "./../../components/TripDetails/DailyPlans";
+import RestaurantDetails from "./../../components/TripDetails/RestaurantsDetails"; // Import the new component
 import { Colors } from "./../../constants/Colors";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 const TripDetails = () => {
@@ -58,7 +59,7 @@ const TripDetails = () => {
         });
 
         setTripDetails(trips[0]?.tripData || {});
-        setFlightImage(trips[0]?.tripData?.flight_details?.image_url || null);
+        setFlightImage(trips[0]?.tripData?.flightDetails?.imageUrl || null);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching trips:", err);
@@ -71,21 +72,21 @@ const TripDetails = () => {
   }, [user]);
 
   const handleBookFlight = () => {
-    const flightDetails = tripDetails.flight_details;
+    const flightDetails = tripDetails.flightDetails;
 
     if (!flightDetails) {
       Alert.alert("Error", "Flight details are not available.");
       return;
     }
 
-    const { departure_city, departure_date, flight_number, price } =
+    const { departureAirport, departureDate, flightNumber, price } =
       flightDetails;
-    const bookingUrl = "https://www.britishairways.com/";
+    const bookingUrl = flightDetails.bookingUrl;
 
     const message = `Flight Details:\n
-      Departure City: ${departure_city}\n
-      Departure Date: ${departure_date}\n
-      Flight Number: ${flight_number}\n
+      Departure Airport: ${departureAirport}\n
+      Departure Date: ${departureDate}\n
+      Flight Number: ${flightNumber}\n
       Price: $${price}`;
 
     Alert.alert("Book Flight", message, [
@@ -100,18 +101,10 @@ const TripDetails = () => {
     ]);
   };
 
-  const renderArrayItems = (items, Component, emptyMessage, icon) => {
+  const renderArrayItems = (items, Component, emptyMessage) => {
     if (Array.isArray(items) && items.length > 0) {
       return items.map((item, index) => (
         <View key={index} style={styles.itemContainer}>
-          {icon && (
-            <Icon
-              name={icon}
-              size={24}
-              color={Colors.primary}
-              style={styles.icon}
-            />
-          )}
           <Component {...item} />
         </View>
       ));
@@ -139,35 +132,40 @@ const TripDetails = () => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      style={styles.scrollView}
+    >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.iconButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.iconButton}
+        >
           <Ionicons name="arrow-back" size={24} color={Colors.primary} />
         </TouchableOpacity>
         <Text style={styles.title}>My Trip Plan</Text>
       </View>
       <Text style={styles.destination}>{tripDetails.destination}</Text>
+
       <View style={styles.detailsContainer}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Trip Details:
-          </Text>
+          <Text style={styles.sectionTitle}>Trip Details:</Text>
           <View style={styles.detailRow}>
             <Icon name="calendar-today" size={20} color={Colors.primary} />
             <Text style={styles.detailText}>
-              Start Date: {tripDetails.startdate || "N/A"}
+              Start Date: {tripDetails.startDate || "N/A"}
             </Text>
           </View>
           <View style={styles.detailRow}>
             <Icon name="calendar-today" size={20} color={Colors.primary} />
             <Text style={styles.detailText}>
-              End Date: {tripDetails.enddate || "N/A"}
+              End Date: {tripDetails.endDate || "N/A"}
             </Text>
           </View>
           <View style={styles.detailRow}>
             <Icon name="people" size={20} color={Colors.primary} />
             <Text style={styles.detailText}>
-              Travelers: {tripDetails.travelers || "N/A"}
+              Travelers: {tripDetails.family_size || "N/A"}
             </Text>
           </View>
           <View style={styles.detailRow}>
@@ -187,20 +185,20 @@ const TripDetails = () => {
         <View style={styles.flightContainer}>
           <Text style={styles.sectionTitle}>Flight Details:</Text>
           <Text style={styles.detailText}>
-            Airline: {tripDetails.flight_details?.airline || "N/A"}
+            Airline: {tripDetails.flightDetails?.airline || "N/A"}
           </Text>
           <Text style={styles.detailText}>
-            Route: {tripDetails.flight_details?.departure_city || "N/A"} to{" "}
-            {tripDetails.flight_details?.arrival_city || "N/A"}
+            Route: {tripDetails.flightDetails?.departureAirport || "N/A"} to{" "}
+            {tripDetails.flightDetails?.arrivalAirport || "N/A"}
           </Text>
           <Text style={styles.detailText}>
-            Departure: {tripDetails.flight_details?.departure_date || "N/A"}
+            Departure: {tripDetails.flightDetails?.departureDate || "N/A"}
           </Text>
           <Text style={styles.detailText}>
-            Arrival: {tripDetails.flight_details?.arrival_date || "N/A"}
+            Arrival: {tripDetails.flightDetails?.arrivalDate || "N/A"}
           </Text>
           <Text style={styles.detailText}>
-            Price: ${tripDetails.flight_details?.price || "N/A"}
+            Price: ${tripDetails.flightDetails?.flightPrice || "N/A"}
           </Text>
           <TouchableOpacity
             style={styles.bookButton}
@@ -210,41 +208,64 @@ const TripDetails = () => {
           </TouchableOpacity>
         </View>
       </View>
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Hotels:</Text>
-        {tripDetails.hotels && tripDetails.hotels.length > 0 ? (
+        {tripDetails.hotels &&
+        Array.isArray(tripDetails.hotels) &&
+        tripDetails.hotels.length > 0 ? (
           renderArrayItems(
             tripDetails.hotels,
             HotelDetails,
-            "No hotel details available.",
-            "hotel"
+            "No hotels available."
           )
         ) : (
           <Text style={styles.emptyMessage}>No hotels available.</Text>
         )}
       </View>
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Places to Visit:</Text>
-        {tripDetails.places_to_visit &&
-        Array.isArray(tripDetails.places_to_visit) &&
-        tripDetails.places_to_visit.length > 0 ? (
+        {tripDetails.placesToVisit &&
+        Array.isArray(tripDetails.placesToVisit) &&
+        tripDetails.placesToVisit.length > 0 ? (
           renderArrayItems(
-            tripDetails.places_to_visit,
+            tripDetails.placesToVisit,
             PlaceDetails,
-            "No places to visit available.",
-            "place"
+            "No places to visit available."
           )
         ) : (
           <Text style={styles.emptyMessage}>No places to visit available.</Text>
         )}
       </View>
-
+      
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Daily Plan:</Text>
-        {tripDetails.day_plan && Array.isArray(tripDetails.day_plan) ? (
-          <DailyPlan dailyPlan={tripDetails.day_plan} />
+        <Text style={styles.sectionTitle}>Daily Plans:</Text>
+        {tripDetails.dailyPlan &&
+        Array.isArray(tripDetails.dailyPlan) &&
+        tripDetails.dailyPlan.length > 0 ? (
+          renderArrayItems(
+            tripDetails.dailyPlan,
+            DailyPlan,
+            "No daily plans available."
+          )
         ) : (
           <Text style={styles.emptyMessage}>No daily plans available.</Text>
+        )}
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Restaurants:</Text>
+        {tripDetails.restaurants &&
+        Array.isArray(tripDetails.restaurants) &&
+        tripDetails.restaurants.length > 0 ? (
+          renderArrayItems(
+            tripDetails.restaurants,
+            RestaurantDetails,
+            "No restaurants available."
+          )
+        ) : (
+          <Text style={styles.emptyMessage}>No restaurants available.</Text>
         )}
       </View>
     </ScrollView>
@@ -253,98 +274,92 @@ const TripDetails = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    padding: 20,
+    backgroundColor: "#F5F5F5",
+  },
+  scrollView: {
+    flex: 1,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
     justifyContent: "center",
+    marginBottom: 20,
+    marginTop:20,
   },
   iconButton: {
     position: "absolute",
-    left: 16,
+    left: 10,
   },
   title: {
-    fontSize: 25,
+    fontSize: 24,
     fontWeight: "bold",
     color: Colors.primary,
     textAlign: "center",
-    marginTop:20,
   },
   destination: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
-    color: Colors.primary,
-    marginBottom: 8,
+    color: Colors.secondary,
     textAlign: "center",
+    marginBottom: 20,
   },
   detailsContainer: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 20,
+    marginBottom: 20,
+    elevation: 2,
   },
   section: {
-    backgroundColor: '#e0f7fa',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: Colors.primary,
-    marginBottom: 8,
-    textAlign:"center"
+    marginBottom: 10,
+    textAlign: "center",
   },
   detailRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 10,
   },
   detailText: {
-    marginLeft: 8,
     fontSize: 16,
-  },
-  flightContainer: {
-    backgroundColor: '#fce4ec',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
+    marginLeft: 10,
+    color: "#333",
   },
   bookButton: {
     backgroundColor: Colors.primary,
-    borderRadius: 8,
-    padding: 12,
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
     alignItems: "center",
   },
   bookButtonText: {
-    color: '#fff',
+    color: "#FFF",
     fontSize: 16,
     fontWeight: "bold",
   },
+  itemContainer: {
+    marginBottom: 15,
+  },
   emptyMessage: {
     textAlign: "center",
-    color: '#888',
+    fontSize: 16,
+    color: "#666",
+  },
+  error: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "red",
   },
   loading: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-  },
-  error: {
-    textAlign: "center",
-    color: 'red',
-    fontSize: 16,
-  },
-  itemContainer: {
-    marginBottom: 16,
-  },
-  icon: {
-    marginRight: 8,
   },
 });
 

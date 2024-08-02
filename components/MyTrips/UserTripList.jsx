@@ -54,14 +54,14 @@ const UserTripList = ({ trips }) => {
               <Icon name="people" size={20} color={Colors.light.icon} />
               <Text style={styles.tripDetail}>
                 Travelers:{" "}
-                {trips[0]?.tripData?.travelers || "No data available"}
+                {trips[0]?.tripData?.family_size || "No data available"}
               </Text>
             </View>
             <View style={styles.detailContainer}>
               <Icon name="calendar-today" size={20} color={Colors.light.icon} />
               <Text style={styles.tripDetail}>
-                Travel Dates: {formatDate(trips[0]?.tripData?.startdate)} to{" "}
-                {formatDate(trips[0]?.tripData?.enddate)}
+                Travel Dates: {formatDate(trips[0]?.tripData?.startDate)} to{" "}
+                {formatDate(trips[0]?.tripData?.endDate)}
               </Text>
             </View>
             <View style={styles.detailContainer}>
@@ -113,14 +113,14 @@ const UserTripList = ({ trips }) => {
               <View style={styles.detailContainer}>
                 <Icon name="people" size={20} color={Colors.white} />
                 <Text style={styles.tripDetail}>
-                  Travelers: {trip.tripData?.travelers || "No data available"}
+                  Travelers: {trip.tripData?.family_size || "No data available"}
                 </Text>
               </View>
               <View style={styles.detailContainer}>
                 <Icon name="calendar-today" size={20} color={Colors.white} />
                 <Text style={styles.tripDetail}>
-                  Travel Dates: {formatDate(trip.tripData?.startdate)} to{" "}
-                  {formatDate(trip.tripData?.enddate)}
+                  Travel Dates: {formatDate(trip.tripData?.startDate)} to{" "}
+                  {formatDate(trip.tripData?.endDate)}
                 </Text>
               </View>
               <View style={styles.detailContainer}>
