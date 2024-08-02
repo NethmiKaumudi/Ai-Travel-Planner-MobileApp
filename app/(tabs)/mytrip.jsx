@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, ScrollView
 import { getAuth } from 'firebase/auth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from './../../config/FirebaseConfig'; // Update this path as needed
-import { useRouter } from 'expo-router';
 import UserTripList from './../../components/MyTrips/UserTripList'; // Update this path as needed
 import StartNewTripCard from './../../components/MyTrips/StartNewTripCard'; // Update this path as needed
 import { Colors } from './../../constants/Colors'; // Update this path as needed
@@ -14,7 +13,6 @@ const MyTripsPage = () => {
   const [error, setError] = useState(null);
   const [showStartNewTripCard, setShowStartNewTripCard] = useState(false);
   const user = getAuth().currentUser;
-  const router = useRouter();
 
   useEffect(() => {
     const fetchUserTrips = async () => {
@@ -36,10 +34,7 @@ const MyTripsPage = () => {
           fetchedTrips.push({ id: doc.id, ...tripData });
         });
 
-        console.log("Fetched trips:", fetchedTrips); // Debug log
-
         setTrips(fetchedTrips);
-        setShowStartNewTripCard(fetchedTrips.length === 0);
       } catch (error) {
         console.error("Error fetching user trips:", error);
         setError("Error fetching trips. Please try again later.");
@@ -52,10 +47,12 @@ const MyTripsPage = () => {
   }, [user]);
 
   const handleAddNewTrip = () => {
+    // Show the "Start New Trip" card
     setShowStartNewTripCard(true);
   };
 
   const handleCloseNewTripCard = () => {
+    // Hide the "Start New Trip" card
     setShowStartNewTripCard(false);
   };
 
@@ -72,9 +69,11 @@ const MyTripsPage = () => {
       ) : error ? (
         <Text style={styles.errorText}>{error}</Text>
       ) : (
-        <ScrollView style={styles.content}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           {showStartNewTripCard ? (
-            <StartNewTripCard onClose={handleCloseNewTripCard} />
+            <View style={styles.centeredContainer}>
+              <StartNewTripCard onClose={handleCloseNewTripCard} />
+            </View>
           ) : (
             <UserTripList trips={trips} />
           )}
@@ -95,13 +94,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: Colors.light.primary,
+    
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
     marginTop:20,
-
   },
   addButton: {
     backgroundColor: '#fff',
@@ -114,9 +113,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: Colors.light.primary,
   },
-  content: {
+  scrollContent: {
+    flexGrow: 1,
+  },
+  centeredContainer: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
+    minHeight: '100%', // Ensure the container fills the available space
   },
   errorText: {
     color: 'red',
